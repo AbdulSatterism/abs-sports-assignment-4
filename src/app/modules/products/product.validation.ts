@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const productValidationSchema = z.object({
+const createProductValidation = z.object({
   body: z.object({
     name: z.string(),
     category: z.string(),
@@ -14,4 +14,21 @@ const productValidationSchema = z.object({
   }),
 })
 
-export const productValidations = { productValidationSchema }
+const updateProductValidation = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    category: z.string().optional(),
+    quantity: z.number().optional(),
+    rating: z.number().optional(),
+    price: z.number().optional(),
+    brand: z.string().optional(),
+    description: z.string().optional(),
+    image: z.string().optional(),
+    inStock: z.boolean().optional(),
+  }),
+})
+
+export const productValidations = {
+  createProductValidation,
+  updateProductValidation,
+}

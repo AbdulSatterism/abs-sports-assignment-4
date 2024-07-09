@@ -19,6 +19,8 @@ router.patch(
 
 router.get('/products', productControllers.getProducts)
 
+router.get('/product/:id', productControllers.singleProduct)
+
 router.delete('/product/:id', productControllers.deleteProducts)
 
 export const productRoutes = router

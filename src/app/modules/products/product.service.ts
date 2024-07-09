@@ -33,6 +33,11 @@ const deleteProductFromDB = async (id: string) => {
   return result
 }
 
+const getSingleProductFromDB = async (id: string) => {
+  const result = await Products.findById(id)
+  return result
+}
+
 const updateProductIntoDB = async (id: string, payload: TProducts) => {
   const result = await Products.findByIdAndUpdate(id, payload, { new: true })
   return result
@@ -43,4 +48,5 @@ export const productServices = {
   getProductsFromDB,
   deleteProductFromDB,
   updateProductIntoDB,
+  getSingleProductFromDB
 }

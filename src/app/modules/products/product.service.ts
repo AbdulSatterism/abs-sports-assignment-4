@@ -8,22 +8,24 @@ const createProductIntoDB = async (payload: TProducts) => {
 
 //:TODO> find and search and filter
 const getProductsFromDB = async (query: Record<string, unknown>) => {
+  const { sortBy, sortOrder } = query
   const searchableField = ['name', 'category', 'brand']
 
   let search = ''
   if (query?.search) {
     search = query.search as string
   }
+  const sort: any = {}
+  if (sortBy === 'price') sort.price = sortOrder === 'desc' ? 1 : -1
+  if (sortBy === 'rating') sort.rating = sortOrder === 'desc' ? 1 : -1
 
-  const searchQuery = await Products.find({
+  const result = await Products.find({
     $or: searchableField.map((field) => ({
       [field]: { $regex: search, $options: 'i' },
     })),
-  })
+  }).sort(sort)
 
-  // const result = await Products.find(query)
-  // return result
-  return searchQuery
+  return result
 }
 
 const deleteProductFromDB = async (id: string) => {

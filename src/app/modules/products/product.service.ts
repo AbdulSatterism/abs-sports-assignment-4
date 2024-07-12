@@ -23,7 +23,9 @@ const getProductsFromDB = async (query: Record<string, unknown>) => {
     $or: searchableField.map((field) => ({
       [field]: { $regex: search, $options: 'i' },
     })),
-  }).sort(sort)
+  })
+    .sort(sort)
+    .sort({ createdAt: -1 })
 
   return result
 }

@@ -19,6 +19,8 @@ router.patch(
 
 router.get('/products', productControllers.getProducts)
 
+router.get('/manage-products', productControllers.manageAllProducts)
+
 router.get('/product/:id', productControllers.singleProduct)
 
 router.delete('/product/:id', productControllers.deleteProducts)

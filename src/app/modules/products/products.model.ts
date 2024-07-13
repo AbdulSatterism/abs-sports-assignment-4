@@ -38,7 +38,7 @@ const productSchema = new Schema<TProducts>(
     inStock: {
       type: Boolean,
       required: true,
-    }
+    },
   },
   {
     timestamps: true,

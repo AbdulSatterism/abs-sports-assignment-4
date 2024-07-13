@@ -25,7 +25,6 @@ const getProducts = catchAsync(async (req, res) => {
   })
 })
 
-
 const singleProduct = catchAsync(async (req, res) => {
   const result = await productServices.getSingleProductFromDB(req.params.id)
 
@@ -67,5 +66,5 @@ export const productControllers = {
   getProducts,
   deleteProducts,
   updateProduct,
-  singleProduct
+  singleProduct,
 }

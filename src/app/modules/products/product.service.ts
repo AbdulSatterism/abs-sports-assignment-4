@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TProducts } from './products.interface'
 import { Products } from './products.model'
 
@@ -8,16 +9,35 @@ const createProductIntoDB = async (payload: TProducts) => {
 
 //:TODO> find and search and filter
 const getProductsFromDB = async (query: Record<string, unknown>) => {
-  const { sortBy, sortOrder } = query
+  // const { sortBy, sortOrder ,page,pageSize} = query;
+  const queryObj = { ...query }
+
   const searchableField = ['name', 'category', 'brand']
+
+  const excludeFields = ['search', 'sortBy', 'sortOrder', 'page', 'limit']
+  excludeFields.forEach((el) => delete queryObj[el])
 
   let search = ''
   if (query?.search) {
     search = query.search as string
   }
   const sort: any = {}
-  if (sortBy === 'price') sort.price = sortOrder === 'desc' ? 1 : -1
-  if (sortBy === 'rating') sort.rating = sortOrder === 'desc' ? 1 : -1
+  if (query?.sortBy === 'price')
+    sort.price = query?.sortOrder === 'desc' ? 1 : -1
+  if (query?.sortBy === 'rating')
+    sort.rating = query?.sortOrder === 'desc' ? 1 : -1
+
+  let page = 1
+  let skip = 0
+  let limit = 6
+  if (query?.limit) {
+    limit = Number(query.limit)
+  }
+
+  if (query?.page) {
+    page = Number(query.page)
+    skip = (page - 1) * limit
+  }
 
   const result = await Products.find({
     $or: searchableField.map((field) => ({
@@ -26,6 +46,8 @@ const getProductsFromDB = async (query: Record<string, unknown>) => {
   })
     .sort(sort)
     .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
 
   return result
 }

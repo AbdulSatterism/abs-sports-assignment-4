@@ -8,4 +8,5 @@ export type TProducts = {
   price: number
   image: string
   inStock: boolean
+  discount?: number
 }

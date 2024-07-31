@@ -7,25 +7,26 @@ const createProductIntoDB = async (payload: TProducts) => {
   return result
 }
 
-//:TODO> find and search and filter
 const getProductsFromDB = async (query: Record<string, unknown>) => {
-  // const { sortBy, sortOrder ,page,pageSize} = query;
-  const queryObj = { ...query }
+  const {
+    search = '',
+    category,
+    minPrice,
+    maxPrice,
+    brand,
+    sort,
+    order = 'asc',
+  } = query
 
-  const searchableField = ['name', 'category', 'brand']
+  const filter = {} as any
+  if (search) filter.name = { $regex: search, $options: 'i' }
+  if (category) filter.category = { $regex: category, $options: 'i' }
+  if (minPrice) filter.price = { ...filter.price, $gte: minPrice }
+  if (maxPrice) filter.price = { ...filter.price, $lte: maxPrice }
+  if (brand) filter.brand = { $regex: brand, $options: 'i' }
 
-  const excludeFields = ['search', 'sortBy', 'sortOrder', 'page', 'limit']
-  excludeFields.forEach((el) => delete queryObj[el])
-
-  let search = ''
-  if (query?.search) {
-    search = query.search as string
-  }
-  const sort: any = {}
-  if (query?.sortBy === 'price')
-    sort.price = query?.sortOrder === 'desc' ? 1 : -1
-  if (query?.sortBy === 'rating')
-    sort.rating = query?.sortOrder === 'desc' ? 1 : -1
+  const sortOrder = order === 'asc' ? 1 : -1
+  const sortField = sort ? { [sort as any]: sortOrder } : { createdAt: -1 }
 
   let page = 1
   let skip = 0
@@ -39,13 +40,8 @@ const getProductsFromDB = async (query: Record<string, unknown>) => {
     skip = (page - 1) * limit
   }
 
-  const result = await Products.find({
-    $or: searchableField.map((field) => ({
-      [field]: { $regex: search, $options: 'i' },
-    })),
-  })
-    .sort(sort)
-    .sort({ createdAt: -1 })
+  const result = await Products.find(filter)
+    .sort(sortField as any)
     .skip(skip)
     .limit(limit)
 
